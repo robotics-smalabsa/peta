@@ -69,7 +69,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-search/4.0.0/leaflet-search.src.js"></script>
 
   <script src="https://robotics-smalabsa.github.io/peta/assets/js/footer.js"></script>
-  <script src="https://robotics-smalabsa.github.io/peta/assets/js/navbar3.js"></script>
+  <script src="/assets/js/navbar3.js"></script>
   <script src="https://robotics-smalabsa.github.io/peta/assets/js/mark.js"></script>
   <script src="https://robotics-smalabsa.github.io/peta/assets/js/language.js"></script>
   <script>
@@ -371,14 +371,19 @@
 
     div.innerHTML = `
       <div class="w-40 bg-white border rounded-lg shadow p-2 text-xs text-black">
-        <div class="flex justify-between items-center">
-          <div class="font-semibold text-black">Polusi Cahaya</div>
-          <span class="md:hidden cursor-pointer" id="legend-toggle-icon">▼</span>
+        <div class="flex flex-col">
+          <div class="hidden md:block font-semibold text-black">Polusi Cahaya</div>
+
+          <!-- Mobile -->
+          <div id="legend-toggle-icon" class="flex items-center justify-between md:hidden font-semibold text-black cursor-pointer p-2">
+            <span>Polusi Cahaya</span>
+            <span id="legend-arrow">▼</span>
+          </div>
+
         </div>
         <div class="legend-content hidden md:block mt-1 space-y-1 text-black"></div>
       </div>
     `;
-
     var contentDiv = div.querySelector(".legend-content");
     var grades = [0, 10, 20, 30, 40, 60, 80];
 
@@ -393,11 +398,15 @@
     }
 
     // Toggle legend untuk HP
-    div.querySelector("#legend-toggle-icon").onclick = function () {
+    document.addEventListener("DOMContentLoaded", () => {
+      const toggleIcon = document.getElementById("legend-toggle-icon");
+      const arrow = document.getElementById("legend-arrow");
+
+      toggleIcon.addEventListener("click", () => {
         contentDiv.classList.toggle("hidden");
-        // ganti arah panah
-        this.textContent = contentDiv.classList.contains("hidden") ? "▼" : "▲";
-    };
+        arrow.textContent = contentDiv.classList.contains("hidden") ? "▼" : "▲";
+      });
+    });
 
     return div;
   };

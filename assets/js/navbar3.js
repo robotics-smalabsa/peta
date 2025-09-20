@@ -86,12 +86,12 @@ document.addEventListener("DOMContentLoaded", () => {
             <!-- Indonesia -->
             <button id="idBtn" class="flex items-center space-x-1 hover:opacity-80 transition">
               <span class="hidden sm:inline text-sm">ID</span>
-              <img src="https://flagcdn.com/w20/id.webp" alt="ID" class="w-6 h-6 rounded-full object-cover">
+              <img src="https://flagcdn.com/w20/id.webp" alt="ID" class="w-6 h-6 rounded-full object-cover flex-shrink-0">
             </button>
-            <!-- Inggris -->
+
             <button id="engBtn" class="flex items-center space-x-1 hover:opacity-80 transition">
               <span class="hidden sm:inline text-sm">ENG</span>
-              <img src="https://flagcdn.com/w20/gb.webp" alt="ENG" class="w-6 h-6 rounded-full object-cover">
+              <img src="https://flagcdn.com/w20/gb.webp" alt="ENG" class="w-6 h-6 rounded-full object-cover flex-shrink-0">
             </button>
           </div>
         </div>
@@ -122,8 +122,11 @@ document.addEventListener("DOMContentLoaded", () => {
         </div>
 
         <div class="sm:hidden">
-          <button type="button" id="open-search" aria-label="Search" class="text-white p-4 shadow-lg z-[1100]">
-            <svg viewBox="0 0 16 16" fill="currentColor" class="size-6"><path fill-rule="evenodd" d="M9.965 11.026a5 5 0 1 1 1.06-1.06l2.755 2.754a.75.75 0 1 1-1.06 1.06l-2.755-2.754ZM10.5 7a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0Z" clip-rule="evenodd"></path></svg>
+          <button type="button" id="open-search" aria-label="Search" 
+                  class="flex items-center justify-center w-10 h-10 text-gray-700 dark:text-gray-200 bg-gray-100 dark:bg-gray-700 rounded-full shadow-lg z-[1100]">
+            <svg viewBox="0 0 16 16" fill="currentColor" class="w-6 h-6">
+              <path fill-rule="evenodd" d="M9.965 11.026a5 5 0 1 1 1.06-1.06l2.755 2.754a.75.75 0 1 1-1.06 1.06l-2.755-2.754ZM10.5 7a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0Z" clip-rule="evenodd"></path>
+            </svg>
           </button>
         </div>
 
