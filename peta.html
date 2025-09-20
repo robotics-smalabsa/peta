@@ -366,52 +366,117 @@
   // Tambahkan kontrol skala
   L.control.scale({ imperial: false }).addTo(map);
   // === Legenda dasar ===
-  var legend = L.control({ position: 'bottomright' });
+   var legend = L.control({ position: "bottomright" });
+
   legend.onAdd = function (map) {
-    var div = L.DomUtil.create('div', 'legend-container');
+    var div = L.DomUtil.create("div");
 
     div.innerHTML = `
-      <div class="w-40 bg-white border rounded-lg shadow p-2 text-xs text-black">
-        <div class="flex flex-col">
-          <div class="hidden md:block font-semibold text-black">Polusi Cahaya</div>
+      <div class="w-[90%] max-w-md bg-gray-900/95 text-white rounded-xl shadow-lg overflow-hidden text-xs">
+        <!-- Header with toggle -->
+        <button id="legend-toggle" class="flex w-full items-center justify-between px-4 py-3 bg-gray-800 hover:bg-gray-700">
+          <h3 class="text-sm md:text-base font-semibold">Light Pollution Scale</h3>
+          <span id="legend-icon" class="transition-transform">▾</span>
+        </button>
 
-          <!-- Mobile -->
-          <div id="legend-toggle-icon" class="flex items-center justify-between md:hidden font-semibold text-black cursor-pointer p-2">
-            <span>Polusi Cahaya</span>
-            <span id="legend-arrow">▼</span>
+        
+        <div class="max-h-[800px] transition-all duration-300 overflow-hidden">
+          <!-- Scale Row -->
+          <div class="px-4 py-3">
+            <div class="flex h-5 w-full rounded-md overflow-hidden">
+              <div class="flex-1 bg-black"></div>
+              <div class="flex-1 bg-gray-700"></div>
+              <div class="flex-1 bg-gray-400"></div>
+              <div class="flex-1 bg-blue-900"></div>
+              <div class="flex-1 bg-blue-600"></div>
+              <div class="flex-[1.5] bg-green-700"></div>
+              <div class="flex-[1.5] bg-yellow-500"></div>
+              <div class="flex-[1.5] bg-orange-500"></div>
+              <div class="flex-[1.5] bg-red-600"></div>
+              <div class="flex-[1.2] bg-white"></div>
+            </div>
+            <div class="flex justify-between text-xs text-gray-300 mt-1">
+              <span>1</span><span>2</span><span>3</span><span>4</span><span>5</span>
+              <span>6</span><span>7</span><span>8</span><span>9</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Dropdown Content -->
+        <div id="legend-content" class="max-h-[800px] transition-all duration-300 overflow-hidden">
+          <!-- Legend Items -->
+          <div class="px-4 divide-y divide-gray-700 text-sm">
+            <div class="flex gap-3 py-3">
+              <div class="w-10 h-10 rounded bg-black"></div>
+              <div>
+                <p class="font-semibold">Very Low (&gt;21.7)</p>
+                <p class="text-gray-400">Natural night sky</p>
+              </div>
+            </div>
+            <div class="flex gap-3 py-3">
+              <div class="w-10 h-10 rounded bg-blue-600"></div>
+              <div>
+                <p class="font-semibold">Low (21.7–20.5)</p>
+                <p class="text-gray-400">Rural sky</p>
+              </div>
+            </div>
+            <div class="flex gap-3 py-3">
+              <div class="w-10 h-10 rounded bg-green-700"></div>
+              <div>
+                <p class="font-semibold">Moderate (20.5–19.5)</p>
+                <p class="text-gray-400">Suburban sky</p>
+              </div>
+            </div>
+            <div class="flex gap-3 py-3">
+              <div class="w-10 h-10 rounded bg-yellow-500"></div>
+              <div>
+                <p class="font-semibold">High (19.5–18.5)</p>
+                <p class="text-gray-400">Urban sky</p>
+              </div>
+            </div>
+            <div class="flex gap-3 py-3">
+              <div class="w-10 h-10 rounded bg-red-600"></div>
+              <div>
+                <p class="font-semibold">Very High (&lt;18.5)</p>
+                <p class="text-gray-400">City core</p>
+              </div>
+            </div>
           </div>
 
+          <!-- Footer -->
+          <div class="flex justify-between items-center px-4 py-2 border-t border-gray-700 text-xs text-gray-400">
+            <span>Map source: OpenStreetMap</span>
+          </div>
         </div>
-        <div class="legend-content hidden md:block mt-1 space-y-1 text-black"></div>
       </div>
     `;
-    var contentDiv = div.querySelector(".legend-content");
-    var grades = [0, 10, 20, 30, 40, 60, 80];
 
-    for (var i = 0; i < grades.length; i++) {
-        contentDiv.innerHTML += `
-          <div class="flex items-center space-x-1">
-            <span class="inline-block w-4 h-4 rounded-sm" 
-                  style="background:${getColor(grades[i] + 1)}"></span>
-            <span class="text-black">${grades[i]}${grades[i + 1] ? '&ndash;' + grades[i + 1] : '+'}</span>
-          </div>
-        `;
-    }
-
-    // Toggle legend untuk HP
-    document.addEventListener("DOMContentLoaded", () => {
-      const toggleIcon = document.getElementById("legend-toggle-icon");
-      const arrow = document.getElementById("legend-arrow");
-
-      toggleIcon.addEventListener("click", () => {
-        contentDiv.classList.toggle("hidden");
-        arrow.textContent = contentDiv.classList.contains("hidden") ? "▼" : "▲";
-      });
-    });
+    // supaya event legend tidak ganggu peta (drag/zoom)
+    L.DomEvent.disableClickPropagation(div);
 
     return div;
   };
 
+  legend.addTo(map);
+
+  // toggle handler
+  setTimeout(() => {
+    const toggleBtn = document.getElementById("legend-toggle");
+    const content = document.getElementById("legend-content");
+    const icon = document.getElementById("legend-icon");
+
+    toggleBtn.addEventListener("click", () => {
+      if (content.classList.contains("max-h-[800px]")) {
+        content.classList.remove("max-h-[800px]");
+        content.classList.add("max-h-0");
+        icon.style.transform = "rotate(-90deg)";
+      } else {
+        content.classList.remove("max-h-0");
+        content.classList.add("max-h-[800px]");
+        icon.style.transform = "rotate(0deg)";
+      }
+    });
+  }, 0);
   legend.addTo(map);
 
   let kotaData = [];
