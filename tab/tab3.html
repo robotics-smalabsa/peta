@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <link rel="icon" href="https://robotics-smalabsa.github.io/peta/assets/picture/logo/GLEMLY.ico" sizes="32x32">
+  <link rel="icon" href="https://robotics-smalabsa.github.io/peta/assets/picture/logo/GLEMLY.svg" type="image/svg+xml">
+  <link rel="icon" href="https://robotics-smalabsa.github.io/peta/assets/picture/logo/GLEMLY.svg" type="image/svg+xml" media="(prefers-color-scheme: dark)">
+  <link rel="apple-touch-icon" sizes="180x180" href="https://robotics-smalabsa.github.io/peta/assets/picture/logo/GLEMLY.webp">
+
+  <link rel="stylesheet" href="https://robotics-smalabsa.github.io/peta/assets/css/style.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"https://robotics-smalabsa.github.io/peta/>
+
+  <title data-i18n-key="brand2"></title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://robotics-smalabsa.github.io/peta/assets/js/language.js"></script>
+  <script src="https://robotics-smalabsa.github.io/peta/assets/js/footer.js"></script>
+  <script src="https://robotics-smalabsa.github.io/peta/assets/js/navbar4.js"></script>
+  <script>
+    tailwind.config = { darkMode: 'class' }
+  </script>
+</head>
+
+<body class="bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100">
+  <div id="navbar"></div>
+
+  <!-- Content -->
+  <section class="pt-28 pb-6 bg-gray-50 dark:bg-gray-900 transition-colors duration-500">
+    <div class="max-w-6xl mx-auto px-6 text-center">
+      <div class="p-6 rounded-2xl bg-white dark:bg-gray-800 shadow-lg">
+        <h2 class="text-3xl font-bold mb-12" data-i18n-key="tab3Title"></h2>
+        <div class="flex items-center gap-3">
+          
+          <!-- Tombol Prev -->
+          <button class="swiper-button-prev relative !static w-9 h-9 bg-gray-800/70 hover:bg-gray-900/90 
+                        text-white rounded-full flex items-center justify-center shadow-lg"></button>
+
+          <!-- Swiper -->
+          <div class="swiper flex-1">
+            <div class="swiper-wrapper">
+              <div class="swiper-slide">
+                <img src="https://robotics-smalabsa.github.io/peta/assets/picture/tab/tab3/1.jpg"
+                    class="w-full h-48 md:h-64 object-cover rounded-xl shadow" data-desc-key="tab3Satu"https://robotics-smalabsa.github.io/peta/>
+              </div>
+              <div class="swiper-slide">
+                <img src="https://robotics-smalabsa.github.io/peta/assets/picture/tab/tab3/2.jpg"
+                    class="w-full h-48 md:h-64 object-cover rounded-xl shadow" data-desc-key="tab3Dua"https://robotics-smalabsa.github.io/peta/>
+              </div>
+              <div class="swiper-slide">
+                <img src="https://robotics-smalabsa.github.io/peta/assets/picture/tab/tab3/3.jpg"
+                    class="w-full h-48 md:h-64 object-cover rounded-xl shadow" data-desc-key="tab3Tiga"https://robotics-smalabsa.github.io/peta/>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tombol Next -->
+          <button class="swiper-button-next relative !static w-9 h-9 bg-gray-800/70 hover:bg-gray-900/90 
+                        text-white rounded-full flex items-center justify-center shadow-lg"></button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="py-6 pb-20 bg-gray-50 dark:bg-gray-900 transition-colors duration-500">
+    <div class="max-w-4xl mx-auto px-6 text-center">
+      <div class="p-3 rounded-xl bg-white dark:bg-gray-800 shadow">
+        <h3 class="text-lg font-semibold mb-2">
+          <span id="desc-title" data-i18n-key=""></span>
+        </h3>
+        <p id="desc-box" class="text-gray-700 dark:text-gray-200 text-sm" 
+          data-i18n-key="">
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <div id="footer"></div>
+  
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+  <script>
+    const swiper = new Swiper('.swiper', {
+      loop: false,
+      centeredSlides: true,
+      slidesPerView: 1,
+      spaceBetween: 20,
+      breakpoints: {
+        768: { slidesPerView: 3 },
+      },
+      effect: 'coverflow',
+      coverflowEffect: {
+        rotate: 0,
+        stretch: 0,
+        depth: 200,
+        modifier: 1.2,
+        slideShadows: false,
+      },
+      navigation: {
+        nextEl: '.swiper-button-next',
+        prevEl: '.swiper-button-prev',
+      },
+    });
+
+    const descBox = document.getElementById('desc-box');
+    function updateDesc() {
+        const activeSlide = swiper.slides[swiper.activeIndex];
+        if (!activeSlide) return;
+
+        const img = activeSlide.querySelector("img");
+        if (!img) return;
+
+        const descKey = img.getAttribute("data-desc-key");
+
+        if (translations[currentLang] && translations[currentLang][descKey]) {
+            descBox.innerHTML = translations[currentLang][descKey];
+            descBox.setAttribute("data-i18n-key", descKey);
+        } else {
+            descBox.textContent = "";
+        }
+    }
+
+    swiper.on('slideChange', updateDesc);
+    window.addEventListener('load', updateDesc); 
+    
+    const descTitle = document.getElementById('desc-title');
+    function updateDescTitle() {
+        const activeSlide = swiper.slides[swiper.activeIndex];
+        if (!activeSlide) return;
+
+        const img = activeSlide.querySelector("img");
+        if (!img) return;
+
+        let descKey = img.getAttribute("data-desc-key");
+        descKey += "Title";
+
+        if (translations[currentLang] && translations[currentLang][descKey]) {
+            descTitle.innerHTML = translations[currentLang][descKey];
+            descTitle.setAttribute("data-i18n-key", descKey);
+        } else {
+            descTitle.textContent = "";
+        }
+    }
+
+    swiper.on('slideChange', updateDescTitle);
+    window.addEventListener('load', updateDescTitle); 
+
+    function changeLanguage(lang) {
+        currentLang = lang;
+        document.querySelectorAll("[data-i18n-key]").forEach(el => {
+            const key = el.getAttribute("data-i18n-key");
+            if (translations[lang][key]) el.innerHTML = translations[lang][key];
+        });
+        setActiveLang(lang);
+        updateDesc();
+    }
+
+    window.addEventListener('load', () => changeLanguage("eng"));
+  </script>
+
+
+</body>
+</html>

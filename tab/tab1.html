@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <link rel="icon" href="https://robotics-smalabsa.github.io/peta/assets/picture/logo/GLEMLY.ico" sizes="32x32">
+  <link rel="icon" href="https://robotics-smalabsa.github.io/peta/assets/picture/logo/GLEMLY.svg" type="image/svg+xml">
+  <link rel="icon" href="https://robotics-smalabsa.github.io/peta/assets/picture/logo/GLEMLY.svg" type="image/svg+xml" media="(prefers-color-scheme: dark)">
+  <link rel="apple-touch-icon" sizes="180x180" href="https://robotics-smalabsa.github.io/peta/assets/picture/logo/GLEMLY.webp">
+
+  <link rel="stylesheet" href="https://robotics-smalabsa.github.io/peta/assets/css/style.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"https://robotics-smalabsa.github.io/peta/>
+
+  <title data-i18n-key="brand2"></title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://robotics-smalabsa.github.io/peta/assets/js/language.js"></script>
+  <script src="https://robotics-smalabsa.github.io/peta/assets/js/footer.js"></script>
+  <script src="https://robotics-smalabsa.github.io/peta/assets/js/navbar4.js"></script>
+  <script>
+    tailwind.config = { darkMode: 'class' }
+  </script>
+</head>
+
+<body class="bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 overflow-x-hidden">
+  <div id="navbar"></div>
+
+  <div class="relative bg-cover bg-center pt-24 pb-16 md:pb-8">
+    <div class="w-4/5 mx-auto grid grid-cols-1 md:grid-cols-2 gap-6 break-words max-w-full">
+      <!-- Penjelasan intensitas -->
+      <div class="p-6 rounded-lg shadow-lg bg-gray-100 dark:bg-gray-800">
+        <h2 class="text-xl font-semibold mb-4 text-center text-gray-900 dark:text-gray-100" data-i18n-key="tab1Title3"></h2>
+        <div class="w-full max-w-full overflow-hidden">
+          <p class="break-words text-gray-800 dark:text-gray-300" data-i18n-key="tab1Desc">
+          </p>
+        </div>
+      </div>
+
+      <div class="flex flex-col space-y-6">
+        <!-- Light Pollution Scale -->
+        <div class="rounded-lg shadow-lg bg-gray-100 dark:bg-gray-800">
+          <button id="toggle-scale" class="w-full flex justify-between items-center p-4 text-xl font-semibold text-gray-900 dark:text-gray-100 focus:outline-none">
+            <span data-i18n-key="tab1Title2"></span>
+            <svg id="arrow" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 transition-transform text-gray-900 dark:text-gray-100" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+            </svg>
+          </button>
+          <div id="scale-content" class="p-4 px-4 pb-4">
+            <div class="grid grid-cols-9 gap-1">
+              <div data-desc-key="scale1" class="h-8 bg-gray-300 dark:bg-gray-900 rounded-sm flex items-center justify-center text-sm cursor-pointer">1</div>
+              <div data-desc-key="scale2" class="h-8 bg-green-500 rounded-sm flex items-center justify-center text-sm cursor-pointer">2</div>
+              <div data-desc-key="scale3" class="h-8 bg-lime-500 rounded-sm flex items-center justify-center text-sm cursor-pointer">3</div>
+              <div data-desc-key="scale4" class="h-8 bg-yellow-500 rounded-sm flex items-center justify-center text-sm cursor-pointer">4</div>
+              <div data-desc-key="scale5" class="h-8 bg-amber-500 rounded-sm flex items-center justify-center text-sm cursor-pointer">5</div>
+              <div data-desc-key="scale6" class="h-8 bg-orange-500 rounded-sm flex items-center justify-center text-sm cursor-pointer">6</div>
+              <div data-desc-key="scale7" class="h-8 bg-red-500 rounded-sm flex items-center justify-center text-sm cursor-pointer">7</div>
+              <div data-desc-key="scale8" class="h-8 bg-red-600 rounded-sm flex items-center justify-center text-sm cursor-pointer">8</div>
+              <div data-desc-key="scale9" class="h-8 bg-red-700 rounded-sm flex items-center justify-center text-sm cursor-pointer">9</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tahukah kamu -->
+        <div class="p-6 rounded-lg shadow-lg bg-gray-100 dark:bg-gray-800">
+          <h2 class="text-xl font-semibold mb-4 text-gray-900 dark:text-gray-100">
+            <span data-i18n-key="tab1Title1"></span>
+            <span id="desc-title" data-i18n-key=""></span>
+          </h2>
+          <div class="h-min-40">
+            <p id="desc-box" class="text-gray-800 dark:text-gray-300" data-i18n-key="tab1Penjelasan"></p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <div id="footer"></div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const toggleBtn = document.getElementById("toggle-scale");
+      const content = document.getElementById("scale-content");
+      const arrow = document.getElementById("arrow");
+
+      toggleBtn.addEventListener("click", () => {
+        content.classList.toggle("show"); // tambahkan class show
+        arrow.classList.toggle("rotate-180");
+      });
+
+      const descBox = document.getElementById("desc-box");
+      const descTitle = document.getElementById("desc-title");
+      let lastDescKey = null;
+
+      function updateDesc(descKey) {
+        const titleKey = descKey + "Title"; // contoh: scale1 -> scale1Title
+
+        if (translations[currentLang]) {
+          if (translations[currentLang][descKey]) {
+            descBox.innerHTML = translations[currentLang][descKey];
+            descBox.setAttribute("data-i18n-key", descKey);
+          }
+          if (translations[currentLang][titleKey]) {
+            descTitle.innerHTML = translations[currentLang][titleKey];
+            descTitle.setAttribute("data-i18n-key", titleKey);
+          }
+          lastDescKey = descKey;
+        }
+      }
+
+      // Untuk update ulang kalau ganti bahasa
+      window.updateDescBox = function () {
+        if (lastDescKey) updateDesc(lastDescKey);
+      };
+
+      // Event klik kotak skala
+      const scaleItems = document.querySelectorAll("#scale-content [data-desc-key]");
+      scaleItems.forEach(item => {
+        item.addEventListener("click", () => {
+          const descKey = item.getAttribute("data-desc-key");
+
+          // Hapus state aktif dari semua kotak
+          scaleItems.forEach(el => el.classList.remove("shadow-lg", "active", "ring-2", "ring-gray-700", "dark:ring-gray-300"));
+
+          // Tambahkan state aktif ke item yang diklik
+          item.classList.add("shadow-lg", "active", "ring-2", "ring-gray-700", "dark:ring-gray-300");
+
+          // Update deskripsi & judul
+          updateDesc(descKey);
+        });
+      });
+    });
+  </script>
+</body>
+</html>

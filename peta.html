@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet-search@2.9.9/dist/leaflet-search.min.css" />
+
+  <link rel="icon" href="https://robotics-smalabsa.github.io/peta/assets/picture/logo/GLEMLY.ico" sizes="32x32">
+  <link rel="icon" href="https://robotics-smalabsa.github.io/peta/assets/picture/logo/GLEMLY.svg" type="image/svg+xml">
+  <link rel="icon" href="https://robotics-smalabsa.github.io/peta/assets/picture/logo/GLEMLY.svg" type="image/svg+xml" media="(prefers-color-scheme: dark)">
+  <link rel="apple-touch-icon" sizes="180x180" href="https://robotics-smalabsa.github.io/peta/assets/picture/logo/GLEMLY.webp">
+
+  <link rel="stylesheet" href="https://robotics-smalabsa.github.io/peta/assets/css/style.css">
+
+  <title data-i18n-key="brand2"></title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = { darkMode: 'class' }
+  </script>
+
+  <style>
+    #map {
+      width: 100%;
+      height: 100%;
+    }
+    .map-container {
+    width: 100%;
+    height: 180px;
+    }
+
+    /* Tambahkan CSS ini agar peta di dalamnya mengisi penuh container-nya */
+    .mini-map-instance {
+    width: 100%;
+    height: 100%;
+    }
+  </style>
+</head>
+<body class="bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100">
+  <div id="navbar"></div>
+  <!-- Popup Custom -->
+  <div id="custom-popup" class="hidden fixed left-2 sm:left-4 top-1/2 -translate-y-1/2 z-[1000]">
+    <div class="popup-content 
+                w-[75vw] max-w-xs
+                sm:w-64 md:w-72 lg:w-80 xl:w-96
+                max-h-[60vh]
+                sm:max-h-[70vh]
+                md:max-h-[80vh]
+                xl:max-h-[85vh]
+                overflow-y-auto 
+                rounded-xl shadow-xl bg-white">
+      <!-- konten diinject JS -->
+    </div>
+  </div>
+
+
+  <!-- Content -->
+  <main class="flex-1 mt-16"> <!-- mt-16 = tinggi navbar -->
+
+    <div id="map" class="w-full" style="height: calc(100vh - 4rem - 60px);"></div>
+    <!-- 4rem = navbar, 60px = footer tinggi (ubah sesuai footer asli) -->
+  </main>
+  <div id="footer"></div>
+
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+  <script src="https://unpkg.com/leaflet-ajax/dist/leaflet.ajax.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-search/4.0.0/leaflet-search.src.js"></script>
+
+  <script src="https://robotics-smalabsa.github.io/peta/assets/js/footer.js"></script>
+  <script src="https://robotics-smalabsa.github.io/peta/assets/js/navbar3.js"></script>
+  <script src="https://robotics-smalabsa.github.io/peta/assets/js/mark.js"></script>
+  <script src="https://robotics-smalabsa.github.io/peta/assets/js/language.js"></script>
+  <script>
+  // --- Popup Custom dengan Tailwind (Card + Map + Carousel) ---
+  function openPopup(point) {
+    const popup = document.getElementById("custom-popup");
+    popup.classList.remove("hidden");
+
+    // isi konten
+    const content = `
+      <div class="w-full">
+        <div style="background-color:${getWarna(point.scale)};" class="px-4 py-2 text-gray-900 font-bold text-lg">
+          ${point.name}
+          <button id="close-popup" 
+            class="absolute top-2 right-2 text-gray-500 hover:text-red-500">
+            ✕
+          </button>
+        </div>
+        <div class="w-full h-36" id="mini-map-popup"></div>
+        <div class="p-4 px-4 pb-4">
+          <div class="grid grid-cols-9 gap-1">
+            <div class="h-8 bg-gray-300 dark:bg-gray-900 rounded-sm flex items-center justify-center text-sm cursor-pointer">1</div>
+            <div class="h-8 bg-green-500 rounded-sm flex items-center justify-center text-sm cursor-pointer">2</div>
+            <div class="h-8 bg-lime-500 rounded-sm flex items-center justify-center text-sm cursor-pointer">3</div>
+            <div class="h-8 bg-yellow-500 rounded-sm flex items-center justify-center text-sm cursor-pointer">4</div>
+            <div class="h-8 bg-amber-500 rounded-sm flex items-center justify-center text-sm cursor-pointer">5</div>
+            <div class="h-8 bg-orange-500 rounded-sm flex items-center justify-center text-sm cursor-pointer">6</div>
+            <div class="h-8 bg-red-500 rounded-sm flex items-center justify-center text-sm cursor-pointer">7</div>
+            <div class="h-8 bg-red-600 rounded-sm flex items-center justify-center text-sm cursor-pointer">8</div>
+            <div class="h-8 bg-red-700 rounded-sm flex items-center justify-center text-sm cursor-pointer">9</div>
+          </div>
+        </div>
+        <div class="p-4 space-y-2">
+          <p class="text-sm text-gray-700"><b data-i18n-key="Intensitas"></b> ${getKualitas(point.scale)}</p>
+          <p class="text-sm text-gray-700"><b>Bortle:</b> ${point.scale}</p>
+          <p class="text-sm text-gray-700"><b data-i18n-key="Latitude"></b> ${point.lat}</p>
+          <p class="text-sm text-gray-700"><b data-i18n-key="Longtitude"></b> ${point.lng}</p>
+          <div class="space-y-2">
+            <p class="text-sm text-gray-700 font-medium"><b data-i18n-key="jenisLampu"></b></p>
+            <div class="flex items-center justify-center gap-2">
+              <button id="prev" class="px-2 py-1 bg-gray-400 rounded-full hover:bg-yellow-500 text-gray-900">&#8249;</button>
+              <img id="carousel-img" class="w-40 h-24 object-cover rounded-md" 
+                  src="${point.images[0].url}" alt="${point.images[0].title}">
+              <button id="next" class="px-2 py-1 bg-gray-400 rounded-full hover:bg-yellow-500 text-gray-900">&#8250;</button>
+            </div>
+            <p id="carousel-caption" class="text-xs text-center text-gray-500">${point.images[0].title}</p>
+          </div>
+        </div>
+      </div>
+    `;
+
+    document.querySelector("#custom-popup .popup-content").innerHTML = content;
+    document.getElementById("close-popup").addEventListener("click", () => {
+      document.getElementById("custom-popup").classList.add("hidden");
+    });
+    document.querySelectorAll("#custom-popup [data-i18n-key]").forEach(el => {
+      const key = el.getAttribute("data-i18n-key");
+      if (translations[currentLang] && translations[currentLang][key]) {
+        el.innerHTML = translations[currentLang][key];
+      }
+    });
+
+    // Mini map
+    const miniMap = L.map("mini-map-popup", {
+      attributionControl: false,
+      zoomControl: false,
+      dragging: false,
+      scrollWheelZoom: false,
+      doubleClickZoom: false,
+      boxZoom: false,
+      keyboard: false
+    }).setView([point.lat, point.lng], 11);
+
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png").addTo(miniMap);
+    L.marker([point.lat, point.lng]).addTo(miniMap);
+
+    // Carousel
+    let index = 0;
+    const imgElement = document.getElementById("carousel-img");
+    const captionEl = document.getElementById("carousel-caption");
+    document.getElementById("prev").onclick = () => {
+      index = (index - 1 + point.images.length) % point.images.length;
+      imgElement.src = point.images[index].url;
+      captionEl.textContent = point.images[index].title;
+    };
+    document.getElementById("next").onclick = () => {
+      index = (index + 1) % point.images.length;
+      imgElement.src = point.images[index].url;
+      captionEl.textContent = point.images[index].title;
+    };
+  }
+
+  function closePopup() {
+    document.getElementById("custom-popup").classList.add("hidden");
+  }
+
+  // Inisialisasi peta dengan pengaturan awal
+  var boundsIndonesia = [
+      [-11.0, 95.0],
+      [6.0, 141.0]
+  ];
+
+  // Konfigurasi basemaps
+  var osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+    attribution: '© OpenStreetMap'
+  });
+
+  var googleSat = L.tileLayer(
+    'https://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}',
+    { maxZoom: 20, subdomains:['mt0','mt1','mt2','mt3'], attribution: '© Google Satellite' }
+  );
+
+  var googleMap = L.tileLayer(
+    'https://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}',
+    { maxZoom: 20, subdomains:['mt0','mt1','mt2','mt3'], attribution: '© Google Maps' }
+  );
+
+  var map = L.map('map', {
+      center: [-2.5, 118],
+      zoom: 5,
+      minZoom: 5,
+      maxZoom: 10,
+      maxBounds: boundsIndonesia,
+      maxBoundsViscosity: 1.0,
+      layers: [googleSat]
+  });
+
+  // ==== BAGIAN 1: FUNGSI-FUNGSI INTI ====
+  var provinsiLayer;
+
+  // Skala warna berdasarkan intensitas polusi
+  function getColor(d) {
+      return d > 80 ? '#800026' :
+            d > 60 ? '#BD0026' :
+            d > 40 ? '#E31A1C' :
+            d > 30 ? '#FC4E2A' :
+            d > 20 ? '#FD8D3C' :
+            d > 10 ? '#FEB24C' :
+                      '#FFEDA0';
+  }
+  function getWarna(d) {
+      return d >= 9 ? "#800000" :  // Merah gelap
+            d >= 8 ? "#FF0000" :  // Merah
+            d >= 7 ? "#FF4500" :  // Merah oranye
+            d >= 6 ? "#FFA500" :  // Oranye
+            d >= 5 ? "#FFD700" :  // Kuning-oranye
+            d >= 4 ? "#FFFF00" :  // Kuning
+            d >= 3 ? "#ADFF2F" :  // Kuning-hijau
+            d >= 2 ? "#7CFC00" :  // Hijau
+            d >= 1 ? "#00FF00" :  // Hijau terang
+                      "#CCCCCC"; // Tidak diketahui / abu-abu
+  }
+  function getKualitas(d) {
+    return d >= 9 ? "Sangat, sangat buruk" :
+           d >= 8 ? "Sangat buruk" :
+           d >= 7 ? "Buruk" :
+           d >= 6 ? "Kurang" :
+           d >= 5 ? "Sedang" :
+           d >= 4 ? "Lumayan" :
+           d >= 3 ? "Cukup baik" :
+           d >= 2 ? "Baik" :
+           d >= 1 ? "Sangat baik" :
+           "Tidak diketahui";
+}
+
+  // Fungsi untuk menormalkan nama (membersihkan teks agar mudah dicocokkan)
+  function normalizeName(s = '') {
+      return String(s).toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, '').replace(/[\s\.,_/()-]+/g, ' ').trim();
+  }
+
+  // Fungsi untuk mendapatkan nama provinsi dari berbagai kemungkinan properti di GeoJSON
+  function getFeatureName(f) {
+      const p = f.properties || {};
+      const candidateKeys = ['NAME_1', 'provinsi', 'Provinsi', 'PROPINSI', 'Propinsi', 'name', 'NAME'];
+      for (const k of candidateKeys) {
+          if (p[k]) return String(p[k]);
+      }
+      return '(unknown)';
+  }
+
+  // Fungsi untuk highlight saat mouse hover
+  function highlightFeature(e) {
+      var layer = e.target;
+      layer.setStyle({
+          weight: 3,
+          color: '#666',
+          dashArray: '',
+          fillOpacity: 0.7
+      });
+      layer.bringToFront();
+  }
+
+  function resetHighlight(e) {
+      provinsiLayer.resetStyle(e.target);
+  }
+
+  function zoomToFeature(e) {
+      map.fitBounds(e.target.getBounds());
+  }
+
+  // ==== BAGIAN 2: LOGIKA UTAMA PEMBUATAN PETA ====
+
+  // URL untuk data
+  const geojsonURL = "https://raw.githubusercontent.com/superpikar/indonesia-geojson/master/indonesia-province.json";
+  const polusiCsvURL = "https://robotics-smalabsa.github.io/peta/data/titik.csv"; // Pastikan file ini ada
+
+  // Fungsi async utama
+  async function setupMap() {
+      try {
+          // Muat file Peta (GeoJSON) dan file Data (CSV) secara bersamaan
+          const [geojsonResponse, polusiResponse] = await Promise.all([
+              fetch(geojsonURL),
+              fetch(polusiCsvURL)
+          ]);
+          const geojsonData = await geojsonResponse.json();
+          const polusiCsvText = await polusiResponse.text();
+
+          // Parse data CSV menggunakan PapaParse
+          const polusiData = Papa.parse(polusiCsvText, { header: true, dynamicTyping: true }).data;
+
+          // Buat "kamus data" polusi dengan kunci nama yang sudah dinormalkan
+          const polusiLookup = new Map();
+          polusiData.forEach(row => {
+              if (row.Provinsi) {
+                  const normalizedKey = normalizeName(row.Provinsi);
+                  polusiLookup.set(normalizedKey, {
+                      rataRata: row["Rata Rata"],
+                      median: row["Nilai Tengah"],
+                      max: row["Nilai Max"]
+                  });
+              }
+          });
+
+          // Fungsi style utama yang menggabungkan semua logika
+          function style(feature) {
+              const featureName = getFeatureName(feature);
+              const normalizedFeatureName = normalizeName(featureName);
+              const data = polusiLookup.get(normalizedFeatureName);
+
+              if (data) {
+                  // JIKA DATA DITEMUKAN: Warnai berdasarkan intensitas polusi
+                  return {
+                      fillColor: getColor(data.rataRata),
+                      weight: 1.5,
+                      opacity: 1,
+                      color: 'white',
+                      dashArray: '3',
+                      fillOpacity: 0.75
+                  };
+              } else {
+                  // JIKA DATA TIDAK DITEMUKAN: Beri warna abu-abu netral
+                  return {
+                      fillColor: '#D3D3D3',
+                      weight: 1,
+                      opacity: 1,
+                      color: 'white',
+                      dashArray: '3',
+                      fillOpacity: 0.5
+                  };
+              }
+          }
+
+          // Buat layer GeoJSON dan tambahkan ke peta
+          provinsiLayer = L.geoJson(geojsonData, {
+              style: style
+          }).addTo(map);
+
+          // Deklarasikan variabel untuk menampung data titik-titik yang ingin Anda tampilkan
+          
+          const customMarkersLayer = L.layerGroup();
+          // === Event klik marker utama ===
+          pointsOfInterest.forEach(point => {
+            const marker = L.marker([point.lat, point.lng]).addTo(map);
+            marker.on("click", () => openPopup(point));
+          });
+
+        customMarkersLayer.addTo(map);
+
+          var overlayMaps = { "Province": provinsiLayer, "Marker": customMarkersLayer };
+          L.control.layers(baseMaps, overlayMaps).addTo(map);
+
+      } catch (error) {
+          console.error("Gagal memuat atau memproses data:", error);
+      }
+  }
+  // ==== BAGIAN 3: KONFIGURASI PETA LAINNYA ====
+  var baseMaps = { "Google Satellite": googleSat, "OpenStreetMap": osm, "Google Maps": googleMap };
+
+  // Panggil fungsi utama untuk memulai
+  setupMap();
+
+  // Tambahkan kontrol skala
+  L.control.scale({ imperial: false }).addTo(map);
+  // === Legenda dasar ===
+  var legend = L.control({ position: 'bottomright' });
+  legend.onAdd = function (map) {
+    var div = L.DomUtil.create('div', 'legend-container');
+
+    div.innerHTML = `
+      <div class="w-40 bg-white border rounded-lg shadow p-2 text-xs text-black">
+        <div class="flex justify-between items-center">
+          <div class="font-semibold text-black">Polusi Cahaya</div>
+          <span class="md:hidden cursor-pointer" id="legend-toggle-icon">▼</span>
+        </div>
+        <div class="legend-content hidden md:block mt-1 space-y-1 text-black"></div>
+      </div>
+    `;
+
+    var contentDiv = div.querySelector(".legend-content");
+    var grades = [0, 10, 20, 30, 40, 60, 80];
+
+    for (var i = 0; i < grades.length; i++) {
+        contentDiv.innerHTML += `
+          <div class="flex items-center space-x-1">
+            <span class="inline-block w-4 h-4 rounded-sm" 
+                  style="background:${getColor(grades[i] + 1)}"></span>
+            <span class="text-black">${grades[i]}${grades[i + 1] ? '&ndash;' + grades[i + 1] : '+'}</span>
+          </div>
+        `;
+    }
+
+    // Toggle legend untuk HP
+    div.querySelector("#legend-toggle-icon").onclick = function () {
+        contentDiv.classList.toggle("hidden");
+        // ganti arah panah
+        this.textContent = contentDiv.classList.contains("hidden") ? "▼" : "▲";
+    };
+
+    return div;
+  };
+
+  legend.addTo(map);
+
+  let kotaData = [];
+
+  Papa.parse("https://robotics-smalabsa.github.io/peta/data/kota.csv", {
+    download: true,
+    header: true,
+    complete: function(results) {
+      kotaData = results.data
+        .filter(row => row.country === "Indonesia" || row.iso2 === "ID")
+        .map(row => ({
+          name: row.city,
+          lat: parseFloat(row.lat),
+          lng: parseFloat(row.lng)
+        }));
+
+      // Kontrol search langsung dari array
+      var searchControl = new L.Control.Search({
+        sourceData: function(text, callResponse) {
+          var hasil = [];
+          var keyword = text.toLowerCase();
+
+          kotaData.forEach(kota => {
+            if (kota.name && kota.name.toLowerCase().includes(keyword)) {
+              hasil.push({
+                loc: [kota.lat, kota.lng],
+                title: kota.name
+              });
+            }
+          });
+
+          callResponse(hasil);
+          return { abort: () => {} }; // format standar untuk leaflet-search
+        },
+        marker: false, // biar nggak auto-tambah marker default
+        moveToLocation: function(latlng, title, map) {
+          map.setView(latlng, 8); // zoom otomatis ke lokasi
+        },
+        textPlaceholder: "Cari kota di Indonesia...",
+        autoType: true,
+        minLength: 2
+      });
+
+      map.addControl(searchControl);
+    }
+  });
+  </script>
+
+</body>
+</html>
