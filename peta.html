@@ -7,10 +7,10 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet-search@2.9.9/dist/leaflet-search.min.css" />
 
-  <link rel="icon" href="https://robotics-smalabsa.github.io/peta/assets/picture/logo/GLEMLY.ico" sizes="32x32">
-  <link rel="icon" href="https://robotics-smalabsa.github.io/peta/assets/picture/logo/GLEMLY.svg" type="image/svg+xml">
-  <link rel="icon" href="https://robotics-smalabsa.github.io/peta/assets/picture/logo/GLEMLY.svg" type="image/svg+xml" media="(prefers-color-scheme: dark)">
-  <link rel="apple-touch-icon" sizes="180x180" href="https://robotics-smalabsa.github.io/peta/assets/picture/logo/GLEMLY.webp">
+  <link rel="icon" href="https://robotics-smalabsa.github.io/peta/assets/picture/logo/Glemly.ico" sizes="32x32">
+  <link rel="icon" href="https://robotics-smalabsa.github.io/peta/assets/picture/logo/Glemly.svg" type="image/svg+xml">
+  <link rel="icon" href="https://robotics-smalabsa.github.io/peta/assets/picture/logo/Glemly.svg" type="image/svg+xml" media="(prefers-color-scheme: dark)">
+  <link rel="apple-touch-icon" sizes="180x180" href="https://robotics-smalabsa.github.io/peta/assets/picture/logo/Glemly.webp">
 
   <link rel="stylesheet" href="https://robotics-smalabsa.github.io/peta/assets/css/style.css">
 
@@ -345,6 +345,7 @@
           pointsOfInterest.forEach(point => {
             const marker = L.marker([point.lat, point.lng]).addTo(map);
             marker.on("click", () => openPopup(point));
+            marker.addTo(customMarkersLayer); // <-- Tambahkan ke layer group
           });
 
         customMarkersLayer.addTo(map);
