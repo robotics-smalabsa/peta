@@ -51,6 +51,17 @@
         scale9Title: "Cahaya Ekstrem",
         scale9: "Pada skala ini, bintang hilang total. Manusia hanya bisa melihat Bulan dan beberapa planet. Langit malam berubah menjadi “langit palsu” karena seluruh langit bercahaya oleh polusi cahaya. Dampaknya ekosistem tercemar di area tersebut, banyak hewan nokturnal menghilang, terganggunya siklus hidup tanaman, dan manusia mengalami masalah kesehatan jangka panjang.",
 
+        // Ket
+        kualitas1: "Sangat baik",
+        kualitas2: "Baik",
+        kualitas3: "Cukup baik",
+        kualitas4: "Lumayan",
+        kualitas5: "Sedang",
+        kualitas6: "Kurang",
+        kualitas7: "Buruk",
+        kualitas8: "Sangat buruk",
+        kualitas9: "Sangat, sangat buruk",
+
         // Tab2
         tab2Title: 'Jenis Lampu Penyebab Polusi Cahaya',
 
@@ -134,6 +145,18 @@
 
         // 
         support: "Support",
+
+        // Ket
+        kualitas1: "Very Good",
+        kualitas2: "Good",
+        kualitas3: "Fairly Good",
+        kualitas4: "Quite",
+        kualitas5: "Moderate",
+        kualitas6: "Poor",
+        kualitas7: "Bad",
+        kualitas8: "Very Bad",
+        kualitas9: "Extremely Bad",
+
         // Tab 1
         tab1Desc: "Luminous intensity is a measure of the wavelength-weighted power emitted by a light source in a given direction per unit of spatial angle. It's not just about brightness, but also the effects of quality and duration, which play a role in biological and physiological aspects. There's an optimum point where light supports function without causing stress. In both humans and animals, excessively high light intensity at inappropriate times, such as at night, can disrupt healthy rhythms and sleep patterns.",
         tab1Penjelasan: "(Explanation of the results of the impact of the selected light intensity)",

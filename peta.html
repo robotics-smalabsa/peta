@@ -71,7 +71,7 @@
   <script src="https://robotics-smalabsa.github.io/peta/assets/js/footer.js"></script>
   <script src="https://robotics-smalabsa.github.io/peta/assets/js/navbar3.js"></script>
   <script src="https://robotics-smalabsa.github.io/peta/assets/js/mark.js"></script>
-  <script src="https://robotics-smalabsa.github.io/peta/assets/js/language.js"></script>
+  <script src="assets/js/language.js"></script>
   <script>
   // --- Popup Custom dengan Tailwind (Card + Map + Carousel) ---
   function openPopup(point) {
@@ -223,18 +223,25 @@
             d >= 1 ? "#00FF00" :  // Hijau terang
                       "#CCCCCC"; // Tidak diketahui / abu-abu
   }
+  // Buat dictionary kualitas dalam dua bahasa
   function getKualitas(d) {
-    return d >= 9 ? "Sangat, sangat buruk" :
-           d >= 8 ? "Sangat buruk" :
-           d >= 7 ? "Buruk" :
-           d >= 6 ? "Kurang" :
-           d >= 5 ? "Sedang" :
-           d >= 4 ? "Lumayan" :
-           d >= 3 ? "Cukup baik" :
-           d >= 2 ? "Baik" :
-           d >= 1 ? "Sangat baik" :
-           "Tidak diketahui";
-}
+    let key = null;
+
+    if (d >= 9) key = "kualitas9";
+    else if (d >= 8) key = "kualitas8";
+    else if (d >= 7) key = "kualitas7";
+    else if (d >= 6) key = "kualitas6";
+    else if (d >= 5) key = "kualitas5";
+    else if (d >= 4) key = "kualitas4";
+    else if (d >= 3) key = "kualitas3";
+    else if (d >= 2) key = "kualitas2";
+    else if (d >= 1) key = "kualitas1";
+
+    if (key && translations[currentLang] && translations[currentLang][key]) {
+      return translations[currentLang][key];
+    }
+    return currentLang === "id" ? "Tidak diketahui" : "Unknown";
+  }
 
   // Fungsi untuk menormalkan nama (membersihkan teks agar mudah dicocokkan)
   function normalizeName(s = '') {
@@ -403,7 +410,7 @@
         </div>
 
         <!-- Dropdown Content -->
-        <div id="legend-content" class="max-h-[800px] transition-all duration-300 overflow-hidden">
+        <div id="legend-content" class="max-h-0 transition-all duration-300 overflow-hidden">
           <!-- Legend Items -->
           <div class="px-4 divide-y divide-gray-700 text-sm">
             <div class="flex gap-3 py-3">
@@ -461,9 +468,15 @@
 
   // toggle handler
   setTimeout(() => {
+    // Toggle legend
     const toggleBtn = document.getElementById("legend-toggle");
     const content = document.getElementById("legend-content");
     const icon = document.getElementById("legend-icon");
+
+    // Set default tertutup saat load
+    content.classList.remove("max-h-[800px]");
+    content.classList.add("max-h-0");
+    icon.style.transform = "rotate(-90deg)";
 
     toggleBtn.addEventListener("click", () => {
       if (content.classList.contains("max-h-[800px]")) {
