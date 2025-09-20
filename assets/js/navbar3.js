@@ -86,12 +86,12 @@ document.addEventListener("DOMContentLoaded", () => {
             <!-- Indonesia -->
             <button id="idBtn" class="flex items-center space-x-1 hover:opacity-80 transition">
               <span class="hidden sm:inline text-sm">ID</span>
-              <img src="https://flagcdn.com/w20/id.webp" alt="ID" class="w-6 h-6 rounded-full object-cover flex-shrink-0">
+              <img src="https://flagcdn.com/w20/id.webp" alt="ID" class="w-6 aspect-[1/1] rounded-full object-cover flex-shrink-0">
             </button>
 
             <button id="engBtn" class="flex items-center space-x-1 hover:opacity-80 transition">
               <span class="hidden sm:inline text-sm">ENG</span>
-              <img src="https://flagcdn.com/w20/gb.webp" alt="ENG" class="w-6 h-6 rounded-full object-cover flex-shrink-0">
+              <img src="https://flagcdn.com/w20/gb.webp" alt="ENG" class="w-6 aspect-[1/1] rounded-full object-cover flex-shrink-0">
             </button>
           </div>
         </div>
